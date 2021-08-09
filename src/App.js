@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -155,6 +155,30 @@ export default function Dashboard() {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  const [seconds, setSeconds] = useState(0);
+  const [isActive, setIsActive] = useState(false);
+
+  function toggle() {
+    setIsActive(!isActive);
+  }
+
+  function reset() {
+    setSeconds(0);
+    setIsActive(false);
+  }
+
+  useEffect(() => {
+    let interval = null;
+    if (isActive) {
+      interval = setInterval(() => {
+        setSeconds(seconds => seconds + 1);
+      }, 1000);
+    } else if (!isActive && seconds !== 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isActive, seconds]);
+
   console.log(rows);
 
   return (
@@ -195,10 +219,22 @@ export default function Dashboard() {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={fixedHeightPaper}>
-                {/* <Chart /> */}
+                <Title>ควบคุมการทำงาน</Title>
+                <div className="app">
+                  <Typography component="p" variant="h4">
+                    {seconds} วินาที
+                  </Typography>
+                  <div className="row">
+                    <Button variant="outlined" color="primary" className={`button button-primary button-primary-${isActive ? 'active' : 'inactive'}`} onClick={toggle}>
+                      {isActive ? 'พัก' : 'เริ่ม'}
+                    </Button>&nbsp;
+                    <Button variant="outlined" color="primary" onClick={reset}>
+                      รีเซ็ต
+                    </Button>
+                  </div>
+                </div>
               </Paper>
             </Grid>
             <Grid item xs={12} md={4} lg={3}>
@@ -214,13 +250,6 @@ export default function Dashboard() {
                   <Typography color="textSecondary" className={classes.depositContext}>
                     เวลาที่เหลือ : 2
                   </Typography>
-                  <div>
-                    <Button variant="outlined" color="primary" onClick={preventDefault}>
-                      เริ่มการทำงาน
-                    </Button>&nbsp;<Button variant="outlined" color="primary" onClick={preventDefault}>
-                      หยุดการทำงาน
-                    </Button>
-                  </div>
                 </React.Fragment>
               </Paper>
             </Grid>
