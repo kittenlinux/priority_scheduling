@@ -221,24 +221,6 @@ export default function Dashboard() {
           <Grid container spacing={3}>
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={fixedHeightPaper}>
-                <Title>ควบคุมการทำงาน</Title>
-                <div className="app">
-                  <Typography component="p" variant="h4">
-                    {seconds} วินาที
-                  </Typography>
-                  <div className="row">
-                    <Button variant="outlined" color="primary" className={`button button-primary button-primary-${isActive ? 'active' : 'inactive'}`} onClick={toggle}>
-                      {isActive ? 'พัก' : 'เริ่ม'}
-                    </Button>&nbsp;
-                    <Button variant="outlined" color="primary" onClick={reset}>
-                      รีเซ็ต
-                    </Button>
-                  </div>
-                </div>
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
                 <React.Fragment>
                   <Title>โปรเซสที่กำลังทำงาน</Title>
                   <Typography component="p" variant="h4">
@@ -250,6 +232,26 @@ export default function Dashboard() {
                   <Typography color="textSecondary" className={classes.depositContext}>
                     เวลาที่เหลือ : 2
                   </Typography>
+                </React.Fragment>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4} lg={3}>
+              <Paper className={fixedHeightPaper}>
+                <React.Fragment>
+                  <Title>ควบคุมการทำงาน</Title>
+                  <div className="app">
+                    <Typography component="p" variant="h4">
+                      {seconds} วินาที
+                    </Typography>
+                    <div className="row">
+                      <Button variant="outlined" color="primary" className={`button button-primary button-primary-${isActive ? 'active' : 'inactive'}`} onClick={toggle}>
+                        {isActive ? 'พัก' : 'เริ่ม'}
+                      </Button>&nbsp;
+                      <Button variant="outlined" color="primary" onClick={reset}>
+                        รีเซ็ต
+                      </Button>
+                    </div>
+                  </div>
                 </React.Fragment>
               </Paper>
             </Grid>
