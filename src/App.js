@@ -215,9 +215,9 @@ export default function Dashboard() {
                     เวลาที่เหลือ : 2
                   </Typography>
                   <div>
-                    <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+                    <Button variant="outlined" color="primary" onClick={preventDefault}>
                       เริ่มการทำงาน
-                    </Button>&nbsp;<Button variant="outlined" color="primary" onClick={handleClickOpen}>
+                    </Button>&nbsp;<Button variant="outlined" color="primary" onClick={preventDefault}>
                       หยุดการทำงาน
                     </Button>
                   </div>
