@@ -17,11 +17,15 @@ export const rows2 = [
   createData(4, 'P5', '3', '2', 'Terminated'),
 ];
 
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
+function createData(id, process, burst_time, priority, status) {
+  return { id, process, burst_time, priority, status };
 }
 
 function processing(){
+  
+}
+
+function addProcess(burstTime, priority){
   
 }
 

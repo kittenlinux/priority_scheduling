@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -141,6 +141,7 @@ export default function Dashboard() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [open2, setOpenDialog] = React.useState(false);
+  const [add_burst_time, add_priority] = React.useState(0);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -153,6 +154,12 @@ export default function Dashboard() {
   const handleClose = () => {
     setOpenDialog(false);
   };
+  const handleClose_addData = () => {
+    console.log()
+    console.log()
+    
+    setOpenDialog(false);
+  }
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const [seconds, setSeconds] = useState(0);
@@ -178,8 +185,6 @@ export default function Dashboard() {
     }
     return () => clearInterval(interval);
   }, [isActive, seconds]);
-
-  console.log(rows);
 
   return (
     <div className={classes.root}>
@@ -272,10 +277,10 @@ export default function Dashboard() {
                     <TableBody>
                       {rows.map((row) => (
                         <TableRow key={row.id}>
-                          <TableCell>{row.date}</TableCell>
-                          <TableCell>{row.name}</TableCell>
-                          <TableCell>{row.shipTo}</TableCell>
-                          <TableCell>{row.paymentMethod}</TableCell>
+                          <TableCell>{row.process}</TableCell>
+                          <TableCell>{row.burst_time}</TableCell>
+                          <TableCell>{row.priority}</TableCell>
+                          <TableCell>{row.status}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -300,6 +305,7 @@ export default function Dashboard() {
                           label="Burst Time"
                           type="number"
                           fullWidth
+                          required
                         />
                         <TextField
                           margin="dense"
@@ -307,13 +313,15 @@ export default function Dashboard() {
                           label="Priority"
                           type="number"
                           fullWidth
+                          required
+                          defaultValue="1"
                         />
                       </DialogContent>
                       <DialogActions>
                         <Button onClick={handleClose} color="primary">
                           ยกเลิก
                         </Button>
-                        <Button onClick={handleClose} color="primary">
+                        <Button onClick={handleClose_addData} color="primary">
                           เพิ่ม
                         </Button>
                       </DialogActions>
@@ -338,10 +346,10 @@ export default function Dashboard() {
                     <TableBody>
                       {rows2.map((row) => (
                         <TableRow key={row.id}>
-                          <TableCell>{row.date}</TableCell>
-                          <TableCell>{row.name}</TableCell>
-                          <TableCell>{row.shipTo}</TableCell>
-                          <TableCell>{row.paymentMethod}</TableCell>
+                          <TableCell>{row.process}</TableCell>
+                          <TableCell>{row.burst_time}</TableCell>
+                          <TableCell>{row.priority}</TableCell>
+                          <TableCell>{row.status}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
