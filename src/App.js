@@ -185,6 +185,7 @@ export default function Dashboard() {
       console.log('No change!')
       // setIsActive(false);
     } else if (cpu_busy && running_remainingtime === 1) {
+      // หลังโปรเซสทำงานเสร็จแล้ว
       let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
       processTerminated(oldArray => [...oldArray, newElement]);
       if (process_waiting.length) {
