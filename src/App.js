@@ -138,17 +138,17 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const [open2, setOpenDialog] = React.useState(false);
+  const [open, setOpen] = useState(true);
+  const [open2, setOpenDialog] = useState(false);
   const [add_burst_time, addBurstTime] = useState(0);
   const [add_priority, addPriority] = useState(0);
-  const [process_waiting, processWaiting] = React.useState([]);
-  const [process_terminated, processTerminated] = React.useState([]);
-  const [cpu_busy, setCPUBusy] = React.useState(false);
-  const [running_priority, setRunningPriority] = React.useState(0);
-  const [running_process, setRunningProcess] = React.useState(0);
-  const [running_bursttime, setBurstTime] = React.useState(0);
-  const [running_remainingtime, setRemainingTime] = React.useState(0);
+  const [process_waiting, processWaiting] =useState([]);
+  const [process_terminated, processTerminated] = useState([]);
+  const [cpu_busy, setCPUBusy] = useState(false);
+  const [running_priority, setRunningPriority] = useState(0);
+  const [running_process, setRunningProcess] = useState(0);
+  const [running_bursttime, setBurstTime] = useState(0);
+  const [running_remainingtime, setRemainingTime] = useState(0);
   const [process_count, addProcessCount] = useState(1);
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -419,7 +419,7 @@ export default function Dashboard() {
                     <TableBody>
                       {process_terminated.map((row) => (
                         <TableRow key={row.process}>
-                          <TableCell>{row.process}</TableCell>
+                          <TableCell>{'P' + row.process}</TableCell>
                           <TableCell>{row.burst_time}</TableCell>
                           <TableCell>{row.priority}</TableCell>
                           <TableCell>{row.status}</TableCell>
