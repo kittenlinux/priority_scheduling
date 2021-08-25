@@ -181,20 +181,24 @@ export default function Dashboard() {
   function createData(process, burst_time, priority, status) {
     return { process, burst_time, priority, status };
   }
-  
-  function processing(){
-    if(!process_waiting.length){
+
+  function processing() {
+    if (!process_waiting.length) {
       console.log('No change!')
-    }else if (process_waiting.length){
-      
+    } else if (process_waiting.length) {
+
     }
   }
-  
-  function addProcess(){
+
+  function addProcess() {
     let newElement = createData(process_count, add_burst_time, add_priority, 'Waiting')
     processWaiting(oldArray => [...oldArray, newElement]);
     addProcessCount(process_count => process_count + 1)
     setOpenDialog(false);
+  }
+
+  const removeProcess = (process) => {
+    processWaiting(process_waiting.filter((item) => item.process !== process));
   }
 
   useEffect(() => {
@@ -302,13 +306,13 @@ export default function Dashboard() {
                     <TableBody>
                       {process_waiting.map((row) => (
                         <TableRow key={row.process}>
-                          <TableCell>{'P'+row.process}</TableCell>
+                          <TableCell>{'P' + row.process}</TableCell>
                           <TableCell>{row.burst_time}</TableCell>
                           <TableCell>{row.priority}</TableCell>
                           <TableCell>{row.status}</TableCell>
-                          <TableCell><Link color="primary" href="#" onClick={preventDefault}>
-          ยกเลิก
-        </Link></TableCell>
+                          <TableCell><Button variant="outlined" color="primary" onClick={(e) => removeProcess(row.process, e)}>
+                            ยกเลิก
+                          </Button></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -350,7 +354,7 @@ export default function Dashboard() {
                             const { value } = event.target;
                             addPriority(value);
                           }}
-                          // defaultValue="1"
+                        // defaultValue="1"
                         />
                       </DialogContent>
                       <DialogActions>
