@@ -31,7 +31,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { mainListItems } from './listItems';
 import Title from './Title';
-import { CPU, rows, rows2 } from './CPU';
 
 function Copyright() {
   return (
@@ -141,7 +140,15 @@ export default function Dashboard() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [open2, setOpenDialog] = React.useState(false);
-  const [add_burst_time, add_priority] = React.useState(0);
+  const [add_burst_time, addBurstTime] = useState(0);
+  const [add_priority, addPriority] = useState(0);
+  const [process_waiting, processWaiting] = React.useState([]);
+  const [process_terminated, processTerminated] = React.useState([]);
+  const [cpu_busy, setCPUBusy] = React.useState(false);
+  const [running_process, setRunningProcess] = React.useState(0);
+  const [running_bursttime, setBurstTime] = React.useState(0);
+  const [running_remainingtime, setRemainingTime] = React.useState(0);
+  const [process_count, addProcessCount] = useState(1);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -155,9 +162,6 @@ export default function Dashboard() {
     setOpenDialog(false);
   };
   const handleClose_addData = () => {
-    console.log()
-    console.log()
-    
     setOpenDialog(false);
   }
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
@@ -174,11 +178,31 @@ export default function Dashboard() {
     setIsActive(false);
   }
 
+  function createData(process, burst_time, priority, status) {
+    return { process, burst_time, priority, status };
+  }
+  
+  function processing(){
+    if(!process_waiting.length){
+      console.log('No change!')
+    }else if (process_waiting.length){
+      
+    }
+  }
+  
+  function addProcess(){
+    let newElement = createData(process_count, add_burst_time, add_priority, 'Waiting')
+    processWaiting(oldArray => [...oldArray, newElement]);
+    addProcessCount(process_count => process_count + 1)
+    setOpenDialog(false);
+  }
+
   useEffect(() => {
     let interval = null;
     if (isActive) {
       interval = setInterval(() => {
         setSeconds(seconds => seconds + 1);
+        processing();
       }, 1000);
     } else if (!isActive && seconds !== 0) {
       clearInterval(interval);
@@ -272,15 +296,19 @@ export default function Dashboard() {
                         <TableCell>Burst Time</TableCell>
                         <TableCell>Priority</TableCell>
                         <TableCell>สถานะ</TableCell>
+                        <TableCell>ดำเนินการ</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows.map((row) => (
-                        <TableRow key={row.id}>
-                          <TableCell>{row.process}</TableCell>
+                      {process_waiting.map((row) => (
+                        <TableRow key={row.process}>
+                          <TableCell>{'P'+row.process}</TableCell>
                           <TableCell>{row.burst_time}</TableCell>
                           <TableCell>{row.priority}</TableCell>
                           <TableCell>{row.status}</TableCell>
+                          <TableCell><Link color="primary" href="#" onClick={preventDefault}>
+          ยกเลิก
+        </Link></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -306,6 +334,10 @@ export default function Dashboard() {
                           type="number"
                           fullWidth
                           required
+                          onChange={event => {
+                            const { value } = event.target;
+                            addBurstTime(value);
+                          }}
                         />
                         <TextField
                           margin="dense"
@@ -314,14 +346,18 @@ export default function Dashboard() {
                           type="number"
                           fullWidth
                           required
-                          defaultValue="1"
+                          onChange={event => {
+                            const { value } = event.target;
+                            addPriority(value);
+                          }}
+                          // defaultValue="1"
                         />
                       </DialogContent>
                       <DialogActions>
                         <Button onClick={handleClose} color="primary">
                           ยกเลิก
                         </Button>
-                        <Button onClick={handleClose_addData} color="primary">
+                        <Button onClick={addProcess} color="primary">
                           เพิ่ม
                         </Button>
                       </DialogActions>
@@ -344,8 +380,8 @@ export default function Dashboard() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {rows2.map((row) => (
-                        <TableRow key={row.id}>
+                      {process_terminated.map((row) => (
+                        <TableRow key={row.process}>
                           <TableCell>{row.process}</TableCell>
                           <TableCell>{row.burst_time}</TableCell>
                           <TableCell>{row.priority}</TableCell>
