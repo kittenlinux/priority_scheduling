@@ -145,6 +145,7 @@ export default function Dashboard() {
   const [process_waiting, processWaiting] = React.useState([]);
   const [process_terminated, processTerminated] = React.useState([]);
   const [cpu_busy, setCPUBusy] = React.useState(false);
+  const [running_priority, setRunningPriority] = React.useState(0);
   const [running_process, setRunningProcess] = React.useState(0);
   const [running_bursttime, setBurstTime] = React.useState(0);
   const [running_remainingtime, setRemainingTime] = React.useState(0);
@@ -161,9 +162,6 @@ export default function Dashboard() {
   const handleClose = () => {
     setOpenDialog(false);
   };
-  const handleClose_addData = () => {
-    setOpenDialog(false);
-  }
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const [seconds, setSeconds] = useState(0);
@@ -183,17 +181,49 @@ export default function Dashboard() {
   }
 
   function processing() {
-    if (!process_waiting.length) {
+    if (!cpu_busy && !process_waiting.length) {
       console.log('No change!')
-    } else if (process_waiting.length) {
-
+      setIsActive(false);
+    } else if (cpu_busy && running_remainingtime === 0) {
+      let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
+      processTerminated(oldArray => [...oldArray, newElement]);
+      if (process_waiting.length) {
+        let temp = Array.from(process_waiting);
+        temp.sort((a, b) => {
+          return a.priority - b.priority;
+        });
+        let temp1 = temp[0];
+        setCPUBusy(true);
+        setRunningProcess(temp1.process);
+        setRunningPriority(temp1.priority);
+        setBurstTime(temp1.burst_time);
+        setRemainingTime(temp1.burst_time);
+        processWaiting(process_waiting.filter((item) => item.process !== temp1.process));
+      } else if (!process_waiting.length) {
+        setCPUBusy(false);
+        setIsActive(false);
+      }
+    } else if (cpu_busy && running_remainingtime !== 0) {
+      setRemainingTime(remaining_time => remaining_time - 1);
+    } else if (!cpu_busy && process_waiting.length) {
+      let temp = Array.from(process_waiting);
+      temp.sort((a, b) => {
+        return a.priority - b.priority;
+      });
+      let temp1 = temp[0];
+      setCPUBusy(true);
+      setRunningProcess(temp1.process);
+      setRunningPriority(temp1.priority);
+      setBurstTime(temp1.burst_time);
+      setRemainingTime(temp1.burst_time);
+      processWaiting(process_waiting.filter((item) => item.process !== temp1.process));
     }
   }
 
   function addProcess() {
     let newElement = createData(process_count, add_burst_time, add_priority, 'Waiting')
     processWaiting(oldArray => [...oldArray, newElement]);
-    addProcessCount(process_count => process_count + 1)
+    addProcessCount(process_count => process_count + 1);
     setOpenDialog(false);
   }
 
@@ -257,13 +287,16 @@ export default function Dashboard() {
                 <React.Fragment>
                   <Title>โปรเซสที่กำลังทำงาน</Title>
                   <Typography component="p" variant="h4">
-                    P6
+                    {cpu_busy ? 'P' + running_process : 'ว่าง'}
                   </Typography>
                   <Typography color="textSecondary" className={classes.depositContext}>
-                    Burst time : 6
+                    Burst time : {cpu_busy ? running_bursttime : 'N/A'}
                   </Typography>
                   <Typography color="textSecondary" className={classes.depositContext}>
-                    เวลาที่เหลือ : 2
+                    เวลาที่เหลือ : {cpu_busy ? running_remainingtime : 'N/A'}
+                  </Typography>
+                  <Typography color="textSecondary" className={classes.depositContext}>
+                    Priority : {cpu_busy ? running_priority : 'N/A'}
                   </Typography>
                 </React.Fragment>
               </Paper>
