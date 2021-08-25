@@ -166,11 +166,11 @@ export default function Dashboard() {
 
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-
+  // ปุ่มเริ่ม/พัก
   function toggle() {
     setIsActive(!isActive);
   }
-
+  // ปุ่มรีเซ็ต
   function reset() {
     setSeconds(0);
     setIsActive(false);
@@ -179,11 +179,11 @@ export default function Dashboard() {
   function createData(process, burst_time, priority, status) {
     return { process, burst_time, priority, status };
   }
-
+  // ส่วนการทำงาน
   function processing() {
     if (!cpu_busy && !process_waiting.length) {
       console.log('No change!')
-      setIsActive(false);
+      // setIsActive(false);
     } else if (cpu_busy && running_remainingtime === 0) {
       let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
       processTerminated(oldArray => [...oldArray, newElement]);
@@ -201,11 +201,12 @@ export default function Dashboard() {
         processWaiting(process_waiting.filter((item) => item.process !== temp1.process));
       } else if (!process_waiting.length) {
         setCPUBusy(false);
-        setIsActive(false);
+        // setIsActive(false);
       }
     } else if (cpu_busy && running_remainingtime !== 0) {
       setRemainingTime(remaining_time => remaining_time - 1);
     } else if (!cpu_busy && process_waiting.length) {
+      // ถ้าซีพียูว่าง และมีโปรเซสรอการทำงานอยู่
       let temp = Array.from(process_waiting);
       temp.sort((a, b) => {
         return a.priority - b.priority;
@@ -215,18 +216,18 @@ export default function Dashboard() {
       setRunningProcess(temp1.process);
       setRunningPriority(temp1.priority);
       setBurstTime(temp1.burst_time);
-      setRemainingTime(temp1.burst_time);
+      setRemainingTime(temp1.burst_time-1);
       processWaiting(process_waiting.filter((item) => item.process !== temp1.process));
     }
   }
-
+  //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
   function addProcess() {
     let newElement = createData(process_count, add_burst_time, add_priority, 'Waiting')
     processWaiting(oldArray => [...oldArray, newElement]);
     addProcessCount(process_count => process_count + 1);
     setOpenDialog(false);
   }
-
+  //ส่วนหลังจากที่กดปุ่มยกเลิกโปรเซส
   const removeProcess = (process) => {
     processWaiting(process_waiting.filter((item) => item.process !== process));
   }
@@ -281,6 +282,7 @@ export default function Dashboard() {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
+          {/* โปรเซสที่กำลังทำงาน */}
           <Grid container spacing={3}>
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={fixedHeightPaper}>
@@ -301,6 +303,7 @@ export default function Dashboard() {
                 </React.Fragment>
               </Paper>
             </Grid>
+            {/* ควบคุมการทำงาน */}
             <Grid item xs={12} md={4} lg={3}>
               <Paper className={fixedHeightPaper}>
                 <React.Fragment>
@@ -321,7 +324,7 @@ export default function Dashboard() {
                 </React.Fragment>
               </Paper>
             </Grid>
-            {/* Recent Orders */}
+            {/* โปรเซสที่รอการทำงาน */}
             <Grid item xs={12} md={6} lg={6}>
               <Paper className={classes.paper}>
                 <React.Fragment>
@@ -351,9 +354,6 @@ export default function Dashboard() {
                     </TableBody>
                   </Table>
                   <div className={classes.seeMore}>
-                    {/* <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
-        </Link> */}
                     <Button variant="outlined" color="primary" onClick={handleClickOpen}>
                       เพิ่มโปรเซส
                     </Button>
@@ -361,7 +361,7 @@ export default function Dashboard() {
                       <DialogTitle id="form-dialog-title">เพิ่มโปรเซส</DialogTitle>
                       <DialogContent>
                         <DialogContentText>
-                          โปรเซส : P9
+                          โปรเซส : P{process_count}
                         </DialogContentText>
                         <TextField
                           autoFocus
@@ -427,11 +427,6 @@ export default function Dashboard() {
                       ))}
                     </TableBody>
                   </Table>
-                  <div className={classes.seeMore}>
-                    {/* <Link color="primary" href="#" onClick={preventDefault}>
-          See more orders
-        </Link> */}
-                  </div>
                 </React.Fragment>
               </Paper>
             </Grid>
