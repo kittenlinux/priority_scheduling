@@ -184,7 +184,7 @@ export default function Dashboard() {
     if (!cpu_busy && !process_waiting.length) {
       console.log('No change!')
       // setIsActive(false);
-    } else if (cpu_busy && running_remainingtime === 0) {
+    } else if (cpu_busy && running_remainingtime === 1) {
       let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
       processTerminated(oldArray => [...oldArray, newElement]);
       if (process_waiting.length) {
@@ -203,7 +203,7 @@ export default function Dashboard() {
         setCPUBusy(false);
         // setIsActive(false);
       }
-    } else if (cpu_busy && running_remainingtime !== 0) {
+    } else if (cpu_busy && running_remainingtime > 0) {
       setRemainingTime(remaining_time => remaining_time - 1);
     } else if (!cpu_busy && process_waiting.length) {
       // ถ้าซีพียูว่าง และมีโปรเซสรอการทำงานอยู่
