@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -31,19 +31,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { mainListItems } from './listItems';
 import Title from './Title';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="#">
-        Priority Scheduling
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 function preventDefault(event) {
   event.preventDefault();
@@ -432,9 +419,6 @@ export default function Dashboard() {
               </Paper>
             </Grid>
           </Grid>
-          <Box pt={4}>
-            {/* <Copyright /> */}
-          </Box>
         </Container>
       </main>
     </div>
