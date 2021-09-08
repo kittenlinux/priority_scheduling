@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -13,7 +12,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Table from '@material-ui/core/Table';
@@ -210,7 +208,7 @@ export default function Dashboard() {
   }
   //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
   function addProcess() {
-    let newElement = createData(process_count, add_burst_time, add_priority, 'Waiting')
+    let newElement = createData(process_count, add_burst_time, add_priority, 'Ready')
     processWaiting(oldArray => [...oldArray, newElement]);
     addProcessCount(process_count => process_count + 1);
     setOpenDialog(false);
@@ -232,7 +230,7 @@ export default function Dashboard() {
     }
     return () => clearInterval(interval);
   }, [isActive, seconds]);
-
+  
   return (
     <div className={classes.root}>
       <CssBaseline />
