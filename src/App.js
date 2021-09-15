@@ -164,16 +164,25 @@ export default function Dashboard() {
   // ส่วนการทำงาน
   function processing() {
     if (process_ready.length < 5 && process_new.length > 0) {
-      let cnt, max;
-      if (process_new.length >= 5) {
-        max = 5
-      } else if (process_new.length < 5) {
-        max = process_new.length
+      let max;
+      if (process_new.length < 5) {
+        if (process_new.length > 5 - process_ready.length) {
+          max = 5 - process_ready.length
+        } else if (process_new.length < 5 - process_ready.length) {
+          max = process_new.length
+        } else if (process_new.length === 5 - process_ready.length) {
+          max = process_new.length
+        }
+      } else if (process_new.length >= 5) {
+        if (process_ready.length < 5) {
+          max = 5 - process_ready.length
+        } else if (process_ready.length === 5) {
+          max = 0
+        }
       }
-      cnt = max - process_ready.length
 
       let temp_array = Array.from(process_new);
-      for (let i = 0; i < cnt; ++i) {
+      for (let i = 0; i < max; ++i) {
         let temp = temp_array[0];
         let newElement = createData(temp.process, temp.burst_time, temp.priority, 'Ready')
         processReady(oldArray => [...oldArray, newElement]);
