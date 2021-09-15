@@ -208,7 +208,7 @@ export default function Dashboard() {
   }
   //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
   function addProcess() {
-    let newElement = createData(process_count, add_burst_time, add_priority, 'Ready')
+    let newElement = createData(process_count, add_burst_time, add_priority, 'New')
     processWaiting(oldArray => [...oldArray, newElement]);
     addProcessCount(process_count => process_count + 1);
     setOpenDialog(false);
