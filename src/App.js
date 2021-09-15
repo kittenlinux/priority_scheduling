@@ -163,7 +163,7 @@ export default function Dashboard() {
   }
   // ส่วนการทำงาน
   function processing() {
-    if (!cpu_busy && !process_new.length && !process_new.length) {
+    if (!cpu_busy && !process_new.length && !process_ready.length) {
       console.log('No change!')
       // setIsActive(false);
     } else if (cpu_busy && running_remainingtime === 1) {
