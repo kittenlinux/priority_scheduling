@@ -30,10 +30,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { mainListItems } from './listItems';
 import Title from './Title';
 
-function preventDefault(event) {
-  event.preventDefault();
-}
-
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -129,6 +125,7 @@ export default function Dashboard() {
   const [add_priority, addPriority] = useState(0);
   const [process_waiting, processWaiting] =useState([]);
   const [process_terminated, processTerminated] = useState([]);
+  const [process_ready, processReady] = useState([]);
   const [cpu_busy, setCPUBusy] = useState(false);
   const [running_priority, setRunningPriority] = useState(0);
   const [running_process, setRunningProcess] = useState(0);
@@ -270,7 +267,7 @@ export default function Dashboard() {
         <Container maxWidth="lg" className={classes.container}>
           {/* โปรเซสที่กำลังทำงาน */}
           <Grid container spacing={3}>
-            <Grid item xs={12} md={8} lg={9}>
+            <Grid item xs={12} md={3} lg={3}>
               <Paper className={fixedHeightPaper}>
                 <React.Fragment>
                   <Title>โปรเซสที่กำลังทำงาน</Title>
@@ -290,7 +287,7 @@ export default function Dashboard() {
               </Paper>
             </Grid>
             {/* ควบคุมการทำงาน */}
-            <Grid item xs={12} md={4} lg={3}>
+            <Grid item xs={12} md={3} lg={3}>
               <Paper className={fixedHeightPaper}>
                 <React.Fragment>
                   <Title>ควบคุมการทำงาน</Title>
@@ -310,11 +307,11 @@ export default function Dashboard() {
                 </React.Fragment>
               </Paper>
             </Grid>
-            {/* โปรเซสที่รอการทำงาน */}
+            {/* โปรเซสที่เพิ่มเข้ามาใหม่ */}
             <Grid item xs={12} md={6} lg={6}>
               <Paper className={classes.paper}>
                 <React.Fragment>
-                  <Title>โปรเซสที่รอการทำงาน</Title>
+                  <Title>โปรเซสที่เพิ่มเข้ามาใหม่</Title>
                   <Table size="small">
                     <TableHead>
                       <TableRow>
@@ -386,6 +383,38 @@ export default function Dashboard() {
                       </DialogActions>
                     </Dialog>
                   </div>
+                </React.Fragment>
+              </Paper>
+            </Grid>
+            {/* โปรเซสที่รอการทำงาน */}
+            <Grid item xs={12} md={6} lg={6}>
+              <Paper className={classes.paper}>
+                <React.Fragment>
+                  <Title>โปรเซสที่รอการทำงาน</Title>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>โปรเซส</TableCell>
+                        <TableCell>Burst Time</TableCell>
+                        <TableCell>Priority</TableCell>
+                        <TableCell>สถานะ</TableCell>
+                        <TableCell>ดำเนินการ</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {process_ready.map((row) => (
+                        <TableRow key={row.process}>
+                          <TableCell>{'P' + row.process}</TableCell>
+                          <TableCell>{row.burst_time}</TableCell>
+                          <TableCell>{row.priority}</TableCell>
+                          <TableCell>{row.status}</TableCell>
+                          <TableCell><Button variant="outlined" color="primary" onClick={(e) => removeProcess(row.process, e)}>
+                            ยกเลิก
+                          </Button></TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </React.Fragment>
               </Paper>
             </Grid>
