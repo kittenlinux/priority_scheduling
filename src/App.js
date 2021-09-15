@@ -165,9 +165,9 @@ export default function Dashboard() {
   function processing() {
     if (process_ready.length < 5 && process_new.length > 0) {
       let cnt, max;
-      if (process_new.length > 5) {
+      if (process_new.length >= 5) {
         max = 5
-      } else if (process_new.length <= 5) {
+      } else if (process_new.length < 5) {
         max = process_new.length
       }
       cnt = max - process_ready.length
@@ -199,7 +199,7 @@ export default function Dashboard() {
         setRunningProcess(temp1.process);
         setRunningPriority(temp1.priority);
         setBurstTime(temp1.burst_time);
-        setRemainingTime(temp1.burst_time-1);
+        setRemainingTime(temp1.burst_time);
         processReady(process_ready.filter((item) => item.process !== temp1.process));
       } else if (!process_ready.length) {
         setCPUBusy(false);
@@ -218,7 +218,7 @@ export default function Dashboard() {
       setRunningProcess(temp1.process);
       setRunningPriority(temp1.priority);
       setBurstTime(temp1.burst_time);
-      setRemainingTime(temp1.burst_time - 1);
+      setRemainingTime(temp1.burst_time);
       processReady(process_ready.filter((item) => item.process !== temp1.process));
     }
   }
