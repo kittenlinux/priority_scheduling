@@ -123,9 +123,9 @@ export default function Dashboard() {
   const [open2, setOpenDialog] = useState(false);
   const [add_burst_time, addBurstTime] = useState(0);
   const [add_priority, addPriority] = useState(0);
-  const [process_waiting, processWaiting] =useState([]);
-  const [process_terminated, processTerminated] = useState([]);
+  const [process_new, processNew] =useState([]);
   const [process_ready, processReady] = useState([]);
+  const [process_terminated, processTerminated] = useState([]);
   const [cpu_busy, setCPUBusy] = useState(false);
   const [running_priority, setRunningPriority] = useState(0);
   const [running_process, setRunningProcess] = useState(0);
@@ -163,15 +163,15 @@ export default function Dashboard() {
   }
   // ส่วนการทำงาน
   function processing() {
-    if (!cpu_busy && !process_waiting.length) {
+    if (!cpu_busy && !process_new.length && !process_new.length) {
       console.log('No change!')
       // setIsActive(false);
     } else if (cpu_busy && running_remainingtime === 1) {
       // หลังโปรเซสทำงานเสร็จแล้ว
       let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
       processTerminated(oldArray => [...oldArray, newElement]);
-      if (process_waiting.length) {
-        let temp = Array.from(process_waiting);
+      if (process_new.length) {
+        let temp = Array.from(process_new);
         temp.sort((a, b) => {
           return a.priority - b.priority;
         });
@@ -181,16 +181,16 @@ export default function Dashboard() {
         setRunningPriority(temp1.priority);
         setBurstTime(temp1.burst_time);
         setRemainingTime(temp1.burst_time);
-        processWaiting(process_waiting.filter((item) => item.process !== temp1.process));
-      } else if (!process_waiting.length) {
+        processNew(process_new.filter((item) => item.process !== temp1.process));
+      } else if (!process_new.length) {
         setCPUBusy(false);
         // setIsActive(false);
       }
     } else if (cpu_busy && running_remainingtime > 0) {
       setRemainingTime(remaining_time => remaining_time - 1);
-    } else if (!cpu_busy && process_waiting.length) {
+    } else if (!cpu_busy && process_new.length) {
       // ถ้าซีพียูว่าง และมีโปรเซสรอการทำงานอยู่
-      let temp = Array.from(process_waiting);
+      let temp = Array.from(process_new);
       temp.sort((a, b) => {
         return a.priority - b.priority;
       });
@@ -200,19 +200,19 @@ export default function Dashboard() {
       setRunningPriority(temp1.priority);
       setBurstTime(temp1.burst_time);
       setRemainingTime(temp1.burst_time-1);
-      processWaiting(process_waiting.filter((item) => item.process !== temp1.process));
+      processNew(process_new.filter((item) => item.process !== temp1.process));
     }
   }
   //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
   function addProcess() {
     let newElement = createData(process_count, add_burst_time, add_priority, 'New')
-    processWaiting(oldArray => [...oldArray, newElement]);
+    processNew(oldArray => [...oldArray, newElement]);
     addProcessCount(process_count => process_count + 1);
     setOpenDialog(false);
   }
   //ส่วนหลังจากที่กดปุ่มยกเลิกโปรเซส
   const removeProcess = (process) => {
-    processWaiting(process_waiting.filter((item) => item.process !== process));
+    processNew(process_new.filter((item) => item.process !== process));
   }
 
   useEffect(() => {
@@ -323,7 +323,7 @@ export default function Dashboard() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {process_waiting.map((row) => (
+                      {process_new.map((row) => (
                         <TableRow key={row.process}>
                           <TableCell>{'P' + row.process}</TableCell>
                           <TableCell>{row.burst_time}</TableCell>
