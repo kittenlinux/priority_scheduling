@@ -123,7 +123,7 @@ export default function Dashboard() {
   const [open2, setOpenDialog] = useState(false);
   const [add_burst_time, addBurstTime] = useState(0);
   const [add_priority, addPriority] = useState(0);
-  const [process_new, processNew] =useState([]);
+  const [process_new, processNew] = useState([]);
   const [process_ready, processReady] = useState([]);
   const [process_terminated, processTerminated] = useState([]);
   const [cpu_busy, setCPUBusy] = useState(false);
@@ -163,15 +163,34 @@ export default function Dashboard() {
   }
   // ส่วนการทำงาน
   function processing() {
-    if (!cpu_busy && !process_new.length && !process_ready.length) {
-      console.log('No change!')
+    if (process_ready.length < 5 && process_new.length > 0) {
+      let cnt, max;
+      if (process_new.length > 5) {
+        max = 5
+      } else if (process_new.length <= 5) {
+        max = process_new.length
+      }
+      cnt = max - process_ready.length
+
+      let temp_array = Array.from(process_new);
+      for (let i = 0; i < cnt; ++i) {
+        let temp = temp_array[0];
+        let newElement = createData(temp.process, temp.burst_time, temp.priority, 'Ready')
+        processReady(oldArray => [...oldArray, newElement]);
+        temp_array.reverse()
+        temp_array.pop()
+        temp_array.reverse()
+      }
+      processNew(temp_array);
+    }
+    if (!cpu_busy && !process_ready.length) {
       // setIsActive(false);
     } else if (cpu_busy && running_remainingtime === 1) {
       // หลังโปรเซสทำงานเสร็จแล้ว
       let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
       processTerminated(oldArray => [...oldArray, newElement]);
-      if (process_new.length) {
-        let temp = Array.from(process_new);
+      if (process_ready.length) {
+        let temp = Array.from(process_ready);
         temp.sort((a, b) => {
           return a.priority - b.priority;
         });
@@ -180,17 +199,17 @@ export default function Dashboard() {
         setRunningProcess(temp1.process);
         setRunningPriority(temp1.priority);
         setBurstTime(temp1.burst_time);
-        setRemainingTime(temp1.burst_time);
-        processNew(process_new.filter((item) => item.process !== temp1.process));
-      } else if (!process_new.length) {
+        setRemainingTime(temp1.burst_time-1);
+        processReady(process_ready.filter((item) => item.process !== temp1.process));
+      } else if (!process_ready.length) {
         setCPUBusy(false);
         // setIsActive(false);
       }
     } else if (cpu_busy && running_remainingtime > 0) {
       setRemainingTime(remaining_time => remaining_time - 1);
-    } else if (!cpu_busy && process_new.length) {
+    } else if (!cpu_busy && process_ready.length) {
       // ถ้าซีพียูว่าง และมีโปรเซสรอการทำงานอยู่
-      let temp = Array.from(process_new);
+      let temp = Array.from(process_ready);
       temp.sort((a, b) => {
         return a.priority - b.priority;
       });
@@ -199,8 +218,8 @@ export default function Dashboard() {
       setRunningProcess(temp1.process);
       setRunningPriority(temp1.priority);
       setBurstTime(temp1.burst_time);
-      setRemainingTime(temp1.burst_time-1);
-      processNew(process_new.filter((item) => item.process !== temp1.process));
+      setRemainingTime(temp1.burst_time - 1);
+      processReady(process_ready.filter((item) => item.process !== temp1.process));
     }
   }
   //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
@@ -219,15 +238,15 @@ export default function Dashboard() {
     let interval = null;
     if (isActive) {
       interval = setInterval(() => {
-        setSeconds(seconds => seconds + 1);
         processing();
+        setSeconds(seconds => seconds + 1);
       }, 1000);
     } else if (!isActive && seconds !== 0) {
       clearInterval(interval);
     }
     return () => clearInterval(interval);
   }, [isActive, seconds]);
-  
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -398,7 +417,6 @@ export default function Dashboard() {
                         <TableCell>Burst Time</TableCell>
                         <TableCell>Priority</TableCell>
                         <TableCell>สถานะ</TableCell>
-                        <TableCell>ดำเนินการ</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -408,9 +426,6 @@ export default function Dashboard() {
                           <TableCell>{row.burst_time}</TableCell>
                           <TableCell>{row.priority}</TableCell>
                           <TableCell>{row.status}</TableCell>
-                          <TableCell><Button variant="outlined" color="primary" onClick={(e) => removeProcess(row.process, e)}>
-                            ยกเลิก
-                          </Button></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
