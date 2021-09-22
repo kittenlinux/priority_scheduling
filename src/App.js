@@ -120,9 +120,6 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
-  const [open2, setOpenDialog] = useState(false);
-  const [add_burst_time, addBurstTime] = useState(0);
-  const [add_priority, addPriority] = useState(0);
   const [process_new, processNew] = useState([]);
   const [process_ready, processReady] = useState([]);
   const [process_terminated, processTerminated] = useState([]);
@@ -138,12 +135,6 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const handleClickOpen = () => {
-    setOpenDialog(true);
-  };
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const [seconds, setSeconds] = useState(0);
@@ -156,6 +147,9 @@ export default function Dashboard() {
   function reset() {
     setSeconds(0);
     setIsActive(false);
+  }
+  function terminate_current_process() {
+
   }
 
   function createData(process, burst_time, priority, status) {
@@ -233,10 +227,17 @@ export default function Dashboard() {
   }
   //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
   function addProcess() {
-    let newElement = createData(process_count, add_burst_time, add_priority, 'New')
+    let min_bursttime = 1
+    let max_bursttime = 10
+    let min_priority = 1
+    let max_priority = 10
+
+    let add_bursttime = Math.floor(Math.random() * (max_bursttime - min_bursttime + 1) + min_bursttime)
+    let add_priority = Math.floor(Math.random() * (max_priority - min_priority + 1) + min_priority)
+
+    let newElement = createData(process_count, add_bursttime, add_priority, 'New')
     processNew(oldArray => [...oldArray, newElement]);
     addProcessCount(process_count => process_count + 1);
-    setOpenDialog(false);
   }
   //ส่วนหลังจากที่กดปุ่มยกเลิกโปรเซส
   const removeProcess = (process) => {
@@ -311,6 +312,9 @@ export default function Dashboard() {
                   <Typography color="textSecondary" className={classes.depositContext}>
                     Priority : {cpu_busy ? running_priority : 'N/A'}
                   </Typography>
+                  <Button variant="outlined" color="primary" onClick={terminate_current_process}>
+                    รีเซ็ต
+                  </Button>
                 </React.Fragment>
               </Paper>
             </Grid>
@@ -340,6 +344,9 @@ export default function Dashboard() {
               <Paper className={classes.paper}>
                 <React.Fragment>
                   <Title>โปรเซสที่เพิ่มเข้ามาใหม่</Title>
+                  <Button variant="outlined" color="primary" onClick={addProcess}>
+                    เพิ่มโปรเซส
+                  </Button>
                   <Table size="small">
                     <TableHead>
                       <TableRow>
@@ -364,53 +371,9 @@ export default function Dashboard() {
                       ))}
                     </TableBody>
                   </Table>
-                  <div className={classes.seeMore}>
-                    <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-                      เพิ่มโปรเซส
-                    </Button>
-                    <Dialog open={open2} onClose={handleClose} aria-labelledby="form-dialog-title">
-                      <DialogTitle id="form-dialog-title">เพิ่มโปรเซส</DialogTitle>
-                      <DialogContent>
-                        <DialogContentText>
-                          โปรเซส : P{process_count}
-                        </DialogContentText>
-                        <TextField
-                          autoFocus
-                          margin="dense"
-                          id="burst_time"
-                          label="Burst Time"
-                          type="number"
-                          fullWidth
-                          required
-                          onChange={event => {
-                            const { value } = event.target;
-                            addBurstTime(value);
-                          }}
-                        />
-                        <TextField
-                          margin="dense"
-                          id="priority"
-                          label="Priority"
-                          type="number"
-                          fullWidth
-                          required
-                          onChange={event => {
-                            const { value } = event.target;
-                            addPriority(value);
-                          }}
-                        // defaultValue="1"
-                        />
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={handleClose} color="primary">
-                          ยกเลิก
-                        </Button>
-                        <Button onClick={addProcess} color="primary">
-                          เพิ่ม
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
-                  </div>
+                  {/* <div className={classes.seeMore}>
+                    
+                  </div> */}
                 </React.Fragment>
               </Paper>
             </Grid>
