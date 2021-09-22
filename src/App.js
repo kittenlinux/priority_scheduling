@@ -143,7 +143,9 @@ export default function Dashboard() {
     setIsActive(false);
   }
   function terminate_current_process() {
-
+    let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
+    processTerminated(oldArray => [...oldArray, newElement]);
+    setCPUBusy(false);
   }
 
   function createData(process, burst_time, priority, status) {
@@ -306,7 +308,7 @@ export default function Dashboard() {
                   <Typography color="textSecondary" className={classes.depositContext}>
                     Priority : {cpu_busy ? running_priority : 'N/A'}
                   </Typography>
-                  <Button variant="outlined" color="primary" onClick={terminate_current_process}>
+                  <Button variant="outlined" color="primary" onClick={terminate_current_process} disabled={!cpu_busy}>
                     จบการทำงาน
                   </Button>
                 </React.Fragment>
