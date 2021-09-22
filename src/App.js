@@ -114,15 +114,19 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
+
+  const [cpu_busy, setCPUBusy] = useState(false);
   const [process_new, processNew] = useState([]);
   const [process_ready, processReady] = useState([]);
   const [process_terminated, processTerminated] = useState([]);
-  const [cpu_busy, setCPUBusy] = useState(false);
+
   const [running_priority, setRunningPriority] = useState(0);
   const [running_process, setRunningProcess] = useState(0);
   const [running_bursttime, setBurstTime] = useState(0);
   const [running_remainingtime, setRemainingTime] = useState(0);
+
   const [process_count, addProcessCount] = useState(1);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -335,6 +339,34 @@ export default function Dashboard() {
                 </React.Fragment>
               </Paper>
             </Grid>
+            {/* โปรเซสที่รอการทำงาน */}
+            <Grid item xs={12} md={6} lg={6}>
+              <Paper className={classes.paper}>
+                <React.Fragment>
+                  <Title>โปรเซสที่รอการทำงาน</Title>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>โปรเซส</TableCell>
+                        <TableCell>Burst Time</TableCell>
+                        <TableCell>Priority</TableCell>
+                        <TableCell>สถานะ</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {process_ready.map((row) => (
+                        <TableRow key={row.process}>
+                          <TableCell>{'P' + row.process}</TableCell>
+                          <TableCell>{row.burst_time}</TableCell>
+                          <TableCell>{row.priority}</TableCell>
+                          <TableCell>{row.status}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </React.Fragment>
+              </Paper>
+            </Grid>
             {/* โปรเซสที่เพิ่มเข้ามาใหม่ */}
             <Grid item xs={12} md={6} lg={6}>
               <Paper className={classes.paper}>
@@ -370,34 +402,6 @@ export default function Dashboard() {
                   {/* <div className={classes.seeMore}>
                     
                   </div> */}
-                </React.Fragment>
-              </Paper>
-            </Grid>
-            {/* โปรเซสที่รอการทำงาน */}
-            <Grid item xs={12} md={6} lg={6}>
-              <Paper className={classes.paper}>
-                <React.Fragment>
-                  <Title>โปรเซสที่รอการทำงาน</Title>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>โปรเซส</TableCell>
-                        <TableCell>Burst Time</TableCell>
-                        <TableCell>Priority</TableCell>
-                        <TableCell>สถานะ</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {process_ready.map((row) => (
-                        <TableRow key={row.process}>
-                          <TableCell>{'P' + row.process}</TableCell>
-                          <TableCell>{row.burst_time}</TableCell>
-                          <TableCell>{row.priority}</TableCell>
-                          <TableCell>{row.status}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
                 </React.Fragment>
               </Paper>
             </Grid>
