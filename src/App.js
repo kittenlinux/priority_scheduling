@@ -313,7 +313,7 @@ export default function Dashboard() {
                     Priority : {cpu_busy ? running_priority : 'N/A'}
                   </Typography>
                   <Button variant="outlined" color="primary" onClick={terminate_current_process}>
-                    รีเซ็ต
+                    จบการทำงาน
                   </Button>
                 </React.Fragment>
               </Paper>
