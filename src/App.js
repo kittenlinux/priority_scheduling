@@ -136,7 +136,20 @@ export default function Dashboard() {
       let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
       processTerminated(oldArray => [...oldArray, newElement]);
       if (process_ready.length) {
-        let temp = Array.from(process_ready);
+        prioritySelect();
+      } else if (!process_ready.length) {
+        setCPUBusy(false);
+        // setIsActive(false);
+      }
+    } else if (cpu_busy && running_remainingtime > 0) {
+      setRemainingTime(remaining_time => remaining_time - 1);
+    } else if (!cpu_busy && process_ready.length) {
+      // ถ้าซีพียูว่าง และมีโปรเซสรอการทำงานอยู่
+      prioritySelect();
+    }
+  }
+  function prioritySelect(){
+    let temp = Array.from(process_ready);
         temp.sort((a, b) => {
           return a.priority - b.priority;
         });
@@ -147,26 +160,6 @@ export default function Dashboard() {
         setBurstTime(temp1.burst_time);
         setRemainingTime(temp1.burst_time);
         processReady(process_ready.filter((item) => item.process !== temp1.process));
-      } else if (!process_ready.length) {
-        setCPUBusy(false);
-        // setIsActive(false);
-      }
-    } else if (cpu_busy && running_remainingtime > 0) {
-      setRemainingTime(remaining_time => remaining_time - 1);
-    } else if (!cpu_busy && process_ready.length) {
-      // ถ้าซีพียูว่าง และมีโปรเซสรอการทำงานอยู่
-      let temp = Array.from(process_ready);
-      temp.sort((a, b) => {
-        return a.priority - b.priority;
-      });
-      let temp1 = temp[0];
-      setCPUBusy(true);
-      setRunningProcess(temp1.process);
-      setRunningPriority(temp1.priority);
-      setBurstTime(temp1.burst_time);
-      setRemainingTime(temp1.burst_time);
-      processReady(process_ready.filter((item) => item.process !== temp1.process));
-    }
   }
   //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
   function addProcess() {
