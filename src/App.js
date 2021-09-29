@@ -148,18 +148,18 @@ export default function Dashboard() {
       prioritySelect();
     }
   }
-  function prioritySelect(){
+  function prioritySelect() {
     let temp = Array.from(process_ready);
-        temp.sort((a, b) => {
-          return a.priority - b.priority;
-        });
-        let temp1 = temp[0];
-        setCPUBusy(true);
-        setRunningProcess(temp1.process);
-        setRunningPriority(temp1.priority);
-        setBurstTime(temp1.burst_time);
-        setRemainingTime(temp1.burst_time);
-        processReady(process_ready.filter((item) => item.process !== temp1.process));
+    temp.sort((a, b) => {
+      return a.priority - b.priority;
+    });
+    let temp1 = temp[0];
+    setCPUBusy(true);
+    setRunningProcess(temp1.process);
+    setRunningPriority(temp1.priority);
+    setBurstTime(temp1.burst_time);
+    setRemainingTime(temp1.burst_time);
+    processReady(process_ready.filter((item) => item.process !== temp1.process));
   }
   //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
   function addProcess() {
