@@ -143,6 +143,11 @@ export default function Dashboard() {
       prioritySelect();
     }
   }
+  function terminate_current_process() {
+    let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
+    processTerminated(oldArray => [...oldArray, newElement]);
+    setCPUBusy(false);
+  }
   function prioritySelect() {
     let temp = Array.from(process_ready);
     temp.sort((a, b) => {
@@ -173,11 +178,6 @@ export default function Dashboard() {
   //ส่วนหลังจากที่กดปุ่มยกเลิกโปรเซส
   const removeProcess = (process) => {
     processNew(process_new.filter((item) => item.process !== process));
-  }
-  function terminate_current_process() {
-    let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
-    processTerminated(oldArray => [...oldArray, newElement]);
-    setCPUBusy(false);
   }
 
   useEffect(() => {
