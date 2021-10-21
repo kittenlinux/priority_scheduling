@@ -76,15 +76,9 @@ export default function Dashboard() {
 
   const [io1_busy, setIO1Busy] = useState(false);
   const [io1_process, setIO1Process] = useState(0);
-  const [io1_bursttime, setIO1BurstTime] = useState(0);
-  const [io1_remainingtime, setIO1RemainingTime] = useState(0);
-  const [io1_priority, setIO1Priority] = useState(0);
 
   const [io2_busy, setIO2Busy] = useState(false);
   const [io2_process, setIO2Process] = useState(0);
-  const [io2_bursttime, setIO2BurstTime] = useState(0);
-  const [io2_remainingtime, setIO2RemainingTime] = useState(0);
-  const [io2_priority, setIO2Priority] = useState(0);
 
   const [process_count, addProcessCount] = useState(1);
 
@@ -201,9 +195,6 @@ export default function Dashboard() {
     let temp1 = process_ready.filter((item) => item.process === process)
     setIO1Busy(true);
     setIO1Process(temp1[0].process);
-    setIO1Priority(temp1[0].priority);
-    setIO1BurstTime(temp1[0].burst_time);
-    setIO1RemainingTime(temp1[0].remaining_time);
     processReady(process_ready.map(x => {
       if (x.process !== process) return x
       return { ...x, status: 'Waiting' }
@@ -216,9 +207,6 @@ export default function Dashboard() {
     let temp1 = process_ready.filter((item) => item.process === process)
     setIO2Busy(true);
     setIO2Process(temp1[0].process);
-    setIO2Priority(temp1[0].priority);
-    setIO2BurstTime(temp1[0].burst_time);
-    setIO2RemainingTime(temp1[0].remaining_time);
     processReady(process_ready.map(x => {
       if (x.process !== process) return x
       return { ...x, status: 'Waiting' }
@@ -226,6 +214,7 @@ export default function Dashboard() {
   }
   function unloadIO1() {
     setIO1Busy(false);
+    setIO1Process(0);
     processReady(process_ready.map(x => {
       if (x.process !== io1_process) return x
       return { ...x, status: 'Ready' }
@@ -233,6 +222,7 @@ export default function Dashboard() {
   }
   function unloadIO2() {
     setIO1Busy(false);
+    setIO2Process(0);
     processReady(process_ready.map(x => {
       if (x.process !== io2_process) return x
       return { ...x, status: 'Ready' }
@@ -366,9 +356,9 @@ export default function Dashboard() {
                           <TableCell>{row.burst_time}</TableCell>
                           <TableCell>{row.priority}</TableCell>
                           <TableCell>{row.status}</TableCell>
-                          <TableCell><Button variant="outlined" color="primary" onClick={(e) => usingIO1selectedProcess(row.process, e)}>
+                          <TableCell><Button variant="outlined" color="primary" disabled={io1_busy || io1_process === row.process || io2_process === row.process} onClick={(e) => usingIO1selectedProcess(row.process, e)}>
                             ใช้ไดรฟ์ดีวีดี
-                          </Button>&nbsp;<Button variant="outlined" color="primary" onClick={(e) => usingIO2selectedProcess(row.process, e)}>
+                          </Button>&nbsp;<Button variant="outlined" color="primary" disabled={io2_busy || io1_process === row.process || io2_process === row.process} onClick={(e) => usingIO2selectedProcess(row.process, e)}>
                               ใช้ฟลอปปี้ดิสก์
                             </Button></TableCell>
                         </TableRow>
