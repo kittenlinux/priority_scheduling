@@ -64,15 +64,27 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
   const classes = useStyles();
 
-  const [cpu_busy, setCPUBusy] = useState(false);
   const [process_new, processNew] = useState([]);
   const [process_ready, processReady] = useState([]);
   const [process_terminated, processTerminated] = useState([]);
 
+  const [cpu_busy, setCPUBusy] = useState(false);
   const [running_priority, setRunningPriority] = useState(0);
   const [running_process, setRunningProcess] = useState(0);
   const [running_bursttime, setBurstTime] = useState(0);
   const [running_remainingtime, setRemainingTime] = useState(0);
+
+  const [io1_busy, setIO1Busy] = useState(false);
+  const [io1_process, setIO1Process] = useState(0);
+  const [io1_bursttime, setIO1BurstTime] = useState(0);
+  const [io1_remainingtime, setIO1RemainingTime] = useState(0);
+  const [io1_priority, setIO1Priority] = useState(0);
+
+  const [io2_busy, setIO2Busy] = useState(false);
+  const [io2_process, setIO2Process] = useState(0);
+  const [io2_bursttime, setIO2BurstTime] = useState(0);
+  const [io2_remainingtime, setIO2RemainingTime] = useState(0);
+  const [io2_priority, setIO2Priority] = useState(0);
 
   const [process_count, addProcessCount] = useState(1);
 
@@ -92,6 +104,9 @@ export default function Dashboard() {
 
   function createData(process, burst_time, priority, status) {
     return { process, burst_time, priority, status };
+  }
+  function createData_Ready(process, burst_time, priority, status, remaining_time) {
+    return { process, burst_time, priority, status, remaining_time };
   }
   // ส่วนการทำงาน
   function processing() {
@@ -116,7 +131,7 @@ export default function Dashboard() {
       let temp_array = Array.from(process_new);
       for (let i = 0; i < max; ++i) {
         let temp = temp_array[0];
-        let newElement = createData(temp.process, temp.burst_time, temp.priority, 'Ready')
+        let newElement = createData_Ready(temp.process, temp.burst_time, temp.priority, 'Ready', temp.burst_time)
         processReady(oldArray => [...oldArray, newElement]);
         temp_array.reverse()
         temp_array.pop()
@@ -130,15 +145,15 @@ export default function Dashboard() {
       // หลังโปรเซสทำงานเสร็จแล้ว
       let newElement = createData(running_process, running_bursttime, running_priority, 'Terminated')
       processTerminated(oldArray => [...oldArray, newElement]);
-      if (process_ready.length) {
+      if (process_ready.filter((item) => item.status !== 'Waiting').length) {
         prioritySelect();
-      } else if (!process_ready.length) {
+      } else if (!process_ready.filter((item) => item.status !== 'Waiting').length) {
         setCPUBusy(false);
         // setIsActive(false);
       }
     } else if (cpu_busy && running_remainingtime > 0) {
       setRemainingTime(remaining_time => remaining_time - 1);
-    } else if (!cpu_busy && process_ready.length) {
+    } else if (!cpu_busy && process_ready.filter((item) => item.status !== 'Waiting').length) {
       // ถ้าซีพียูว่าง และมีโปรเซสรอการทำงานอยู่
       prioritySelect();
     }
@@ -149,7 +164,7 @@ export default function Dashboard() {
     setCPUBusy(false);
   }
   function prioritySelect() {
-    let temp = Array.from(process_ready);
+    let temp = Array.from(process_ready.filter((item) => item.status !== 'Waiting'));
     temp.sort((a, b) => {
       return a.priority - b.priority;
     });
@@ -178,6 +193,50 @@ export default function Dashboard() {
   //ส่วนหลังจากที่กดปุ่มยกเลิกโปรเซส
   const removeProcess = (process) => {
     processNew(process_new.filter((item) => item.process !== process));
+  }
+  function usingIO1_runningProcess() {
+
+  }
+  const usingIO1selectedProcess = (process) => {
+    let temp1 = process_ready.filter((item) => item.process === process)
+    setIO1Busy(true);
+    setIO1Process(temp1[0].process);
+    setIO1Priority(temp1[0].priority);
+    setIO1BurstTime(temp1[0].burst_time);
+    setIO1RemainingTime(temp1[0].remaining_time);
+    processReady(process_ready.map(x => {
+      if (x.process !== process) return x
+      return { ...x, status: 'Waiting' }
+    }))
+  }
+  function usingIO2_runningProcess() {
+
+  }
+  const usingIO2selectedProcess = (process) => {
+    let temp1 = process_ready.filter((item) => item.process === process)
+    setIO2Busy(true);
+    setIO2Process(temp1[0].process);
+    setIO2Priority(temp1[0].priority);
+    setIO2BurstTime(temp1[0].burst_time);
+    setIO2RemainingTime(temp1[0].remaining_time);
+    processReady(process_ready.map(x => {
+      if (x.process !== process) return x
+      return { ...x, status: 'Waiting' }
+    }))
+  }
+  function unloadIO1() {
+    setIO1Busy(false);
+    processReady(process_ready.map(x => {
+      if (x.process !== io1_process) return x
+      return { ...x, status: 'Ready' }
+    }))
+  }
+  function unloadIO2() {
+    setIO1Busy(false);
+    processReady(process_ready.map(x => {
+      if (x.process !== io2_process) return x
+      return { ...x, status: 'Ready' }
+    }))
   }
 
   useEffect(() => {
@@ -251,6 +310,40 @@ export default function Dashboard() {
                 </React.Fragment>
               </Paper>
             </Grid>
+            <Grid item xs={12} md={3} lg={3}>
+              <Paper className={fixedHeightPaper}>
+                <React.Fragment>
+                  <Title>ไดรฟ์ดีวีดี</Title>
+                  <div className="app">
+                    <Typography component="p" variant="h4">
+                      {io1_busy ? 'P' + io1_process : 'ว่าง'}
+                    </Typography>
+                    <div className="row">
+                      <Button variant="outlined" color="primary" onClick={unloadIO1} disabled={!io1_busy}>
+                        เลิกใช้งาน
+                      </Button>
+                    </div>
+                  </div>
+                </React.Fragment>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={3} lg={3}>
+              <Paper className={fixedHeightPaper}>
+                <React.Fragment>
+                  <Title>ฟลอปปี้ดิสก์</Title>
+                  <div className="app">
+                    <Typography component="p" variant="h4">
+                      {io2_busy ? 'P' + io2_process : 'ว่าง'}
+                    </Typography>
+                    <div className="row">
+                      <Button variant="outlined" color="primary" onClick={unloadIO2} disabled={!io2_busy}>
+                        เลิกใช้งาน
+                      </Button>
+                    </div>
+                  </div>
+                </React.Fragment>
+              </Paper>
+            </Grid>
             {/* โปรเซสที่รอการทำงาน */}
             <Grid item xs={12} md={6} lg={6}>
               <Paper className={classes.paper}>
@@ -263,6 +356,7 @@ export default function Dashboard() {
                         <TableCell>Burst Time</TableCell>
                         <TableCell>Priority</TableCell>
                         <TableCell>สถานะ</TableCell>
+                        <TableCell>ดำเนินการ</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -272,6 +366,11 @@ export default function Dashboard() {
                           <TableCell>{row.burst_time}</TableCell>
                           <TableCell>{row.priority}</TableCell>
                           <TableCell>{row.status}</TableCell>
+                          <TableCell><Button variant="outlined" color="primary" onClick={(e) => usingIO1selectedProcess(row.process, e)}>
+                            ใช้ไดรฟ์ดีวีดี
+                          </Button>&nbsp;<Button variant="outlined" color="primary" onClick={(e) => usingIO2selectedProcess(row.process, e)}>
+                              ใช้ฟลอปปี้ดิสก์
+                            </Button></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
