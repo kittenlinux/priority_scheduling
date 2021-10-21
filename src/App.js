@@ -104,20 +104,21 @@ export default function Dashboard() {
   }
   // ส่วนการทำงาน
   function processing() {
-    if (process_ready.length < 5 && process_new.length > 0) {
+    let max_processready = 5;
+    if (process_ready.length < max_processready && process_new.length > 0) {
       let max;
-      if (process_new.length < 5) {
-        if (process_new.length > 5 - process_ready.length) {
-          max = 5 - process_ready.length
-        } else if (process_new.length < 5 - process_ready.length) {
+      if (process_new.length < max_processready) {
+        if (process_new.length > max_processready - process_ready.length) {
+          max = max_processready - process_ready.length
+        } else if (process_new.length < max_processready - process_ready.length) {
           max = process_new.length
-        } else if (process_new.length === 5 - process_ready.length) {
+        } else if (process_new.length === max_processready - process_ready.length) {
           max = process_new.length
         }
-      } else if (process_new.length >= 5) {
-        if (process_ready.length < 5) {
-          max = 5 - process_ready.length
-        } else if (process_ready.length === 5) {
+      } else if (process_new.length >= max_processready) {
+        if (process_ready.length < max_processready) {
+          max = max_processready - process_ready.length
+        } else if (process_ready.length === max_processready) {
           max = 0
         }
       }
