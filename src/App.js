@@ -167,7 +167,7 @@ export default function Dashboard() {
     setRunningProcess(temp1.process);
     setRunningPriority(temp1.priority);
     setBurstTime(temp1.burst_time);
-    setRemainingTime(temp1.burst_time);
+    setRemainingTime(temp1.remaining_time);
     processReady(process_ready.filter((item) => item.process !== temp1.process));
   }
   //ส่วนหลังจากที่กดปุ่มเพิ่มโปรเซส
@@ -189,7 +189,18 @@ export default function Dashboard() {
     processNew(process_new.filter((item) => item.process !== process));
   }
   function usingIO1_runningProcess() {
-
+    setIO1Busy(true);
+    setIO1Process(running_process);
+    setCPUBusy(false);
+    let newElement = createData_Ready(running_process, running_bursttime, running_priority, 'Waiting', running_remainingtime)
+    processReady(oldArray => [...oldArray, newElement]);
+  }
+  function usingIO2_runningProcess() {
+    setIO2Busy(true);
+    setIO2Process(running_process);
+    setCPUBusy(false);
+    let newElement = createData_Ready(running_process, running_bursttime, running_priority, 'Waiting', running_remainingtime)
+    processReady(oldArray => [...oldArray, newElement]);
   }
   const usingIO1selectedProcess = (process) => {
     let temp1 = process_ready.filter((item) => item.process === process)
@@ -199,9 +210,6 @@ export default function Dashboard() {
       if (x.process !== process) return x
       return { ...x, status: 'Waiting' }
     }))
-  }
-  function usingIO2_runningProcess() {
-
   }
   const usingIO2selectedProcess = (process) => {
     let temp1 = process_ready.filter((item) => item.process === process)
@@ -273,12 +281,12 @@ export default function Dashboard() {
                   <Typography color="textSecondary" className={classes.depositContext}>
                     Priority : {cpu_busy ? running_priority : 'N/A'}
                   </Typography>
-                  {/* <Button variant="outlined" color="primary" disabled={io1_busy} onClick={usingIO1_runningProcess}>
+                  <Button variant="outlined" color="primary" disabled={!cpu_busy || io1_busy} onClick={usingIO1_runningProcess}>
                     ใช้ไดรฟ์ดีวีดี
                   </Button>
-                  <Button variant="outlined" color="primary" disabled={io2_busy} onClick={usingIO1_runningProcess}>
+                  <Button variant="outlined" color="primary" disabled={!cpu_busy || io2_busy} onClick={usingIO2_runningProcess}>
                     ใช้ฟลอปปี้ดิสก์
-                  </Button> */}
+                  </Button>
                   <Button variant="outlined" color="primary" onClick={terminate_current_process} disabled={!cpu_busy}>
                     จบการทำงาน
                   </Button>
