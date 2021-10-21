@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 240,
+    height: 300,
   },
   seeMore: {
     marginTop: theme.spacing(3),
@@ -221,7 +221,7 @@ export default function Dashboard() {
     }))
   }
   function unloadIO2() {
-    setIO1Busy(false);
+    setIO2Busy(false);
     setIO2Process(0);
     processReady(process_ready.map(x => {
       if (x.process !== io2_process) return x
@@ -273,6 +273,12 @@ export default function Dashboard() {
                   <Typography color="textSecondary" className={classes.depositContext}>
                     Priority : {cpu_busy ? running_priority : 'N/A'}
                   </Typography>
+                  {/* <Button variant="outlined" color="primary" disabled={io1_busy} onClick={usingIO1_runningProcess}>
+                    ใช้ไดรฟ์ดีวีดี
+                  </Button>
+                  <Button variant="outlined" color="primary" disabled={io2_busy} onClick={usingIO1_runningProcess}>
+                    ใช้ฟลอปปี้ดิสก์
+                  </Button> */}
                   <Button variant="outlined" color="primary" onClick={terminate_current_process} disabled={!cpu_busy}>
                     จบการทำงาน
                   </Button>
